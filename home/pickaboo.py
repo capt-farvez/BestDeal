@@ -1,14 +1,16 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 import os
 
-def scrape_ryans(query):
+def scrape_pickaboo(query):
     # Initialize the Selenium WebDriver
     options = Options()
     options.add_argument("--headless")
     # Cache browser data for faster scraping
-    datadir = os.environ['HOME'] + "/BestDealData/Ryans"
+    datadir = os.environ['HOME'] + "/BestDealData/Pickaboo"
     options.add_argument(f"user-data-dir={datadir}")
     options.binary_location = os.environ['BROWSER']
     driver = webdriver.Chrome(options=options)
@@ -17,28 +19,28 @@ def scrape_ryans(query):
     encoded_query = query.replace(" ", "%20")
 
     # Send a request to the search page
-    driver.get(f"https://www.ryanscomputers.com/search?q={encoded_query}")
-
+    driver.get(f"https://www.pickaboo.com/search-result/{encoded_query}")
+    # Wait for the page to load
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="__next"]/main/section/div[2]/div/div[2]/div[2]/div')))
     # Create a list to store search results
     search_results = []
-    logo = './static/ryans.png'
+    logo = './static/pickaboo.png'
 
     # Now, you can collect all the search results
-    result_elements = driver.find_elements(By.XPATH, '//*[@id="search-box-html"]/div[4]/div/div/div')
+    result_elements = driver.find_elements(By.XPATH, '//*[@id="__next"]/main/section/div[2]/div/div[2]/div[2]/div')
+    
     total_items = len(result_elements)
 
     for item_id in range(1, total_items):
         try:
-            title = driver.find_element(By.XPATH, f'//*[@id="search-box-html"]/div[4]/div/div/div[{item_id}]/div[1]/div[2]/p[1]/a')
-            price = driver.find_element(By.XPATH, f'//*[@id="search-box-html"]/div[4]/div/div/div[{item_id}]/div[1]/div[2]/p[3]')
-            image = driver.find_element(By.XPATH, f'//*[@id="search-box-html"]/div[4]/div/div/div[{item_id}]/div[1]/div[1]/a/img').get_attribute('src')
+
+            title = driver.find_element(By.XPATH, f'//*[@id="__next"]/main/section/div[2]/div/div[2]/div[2]/div[{item_id}]/div/a/div/div/div[2]/h4')
+            price = driver.find_element(By.XPATH, f'//*[@id="__next"]/main/section/div[2]/div/div[2]/div[2]/div[{item_id}]/div/a/div/div/div[2]/p/span')
+            image = driver.find_element(By.XPATH, f'//*[@id="__next"]/main/section/div[2]/div/div[2]/div[2]/div[{item_id}]/div/a/div/div/div[1]/img').get_attribute('src')
             link = title.get_attribute('href')
-           
-            if (price.text == "Tk 0" ):
-                continue
 
             search_results.append({
-                "title": title.get_attribute('title'),
+                "title": title.text,
                 "price": price.text,
                 "image": image,
                 "link": link,
@@ -46,7 +48,7 @@ def scrape_ryans(query):
             })
         except Exception as e:
             if 'DEBUG' in os.environ:
-                print(f"[Ryans search] Exception: {e}")
+                print(f"[Pickaboo search] Exception: {e}")
             pass
 
     # After scraping, close the browser window
