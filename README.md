@@ -18,6 +18,27 @@ BestDeal is a powerful Comparative Shopping Web Application that empowers users 
 * Websockets (`channels` package)
 * GPT4ALL
 
+<<<<<<< HEAD
+### Running the project
+1. Set the environment variable `BROWSER` to the path of the Brave browser.
+   #### For Windows
+    ```
+    set BROWSER="path/to/brave"
+    ```
+
+    #### For macOS (Fish shell)
+    ```
+    set -Ux BROWSER '/Applications/Brave Browser.app
+    /Contents/MacOS/Brave Browser'
+    ```
+2. Download Orca Mini Model and Set the environment variable `MODEL` to the path of the Orca Mini Model.
+    Download model: https://drive.google.com/drive/folders/1BkdWrhxrQMBDU6OcRFjbRkPMJWDSbEho?usp=drive_link
+    #### For Windows
+    ```
+    set MODEL="path/to/orcamini"
+    ```
+
+=======
 ## Running the project
 ### Dependencies
 ```
